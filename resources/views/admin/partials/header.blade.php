@@ -1,6 +1,6 @@
 <style>
     .skin-red .main-header .navbar .sidebar-toggle:hover {
-        background: #222d32 !important;
+        background: #1955a6 !important;
     }
 </style>
 <!-- Main Header -->
@@ -14,7 +14,7 @@
     </a> --}}
 
     <!-- Header Navbar -->
-    <nav class="navbar navbar-static-top" role="navigation" style="background: #222d32 !important;">
+    <nav class="navbar navbar-static-top" role="navigation" style="background: #1955a6 !important;">
         <!-- Sidebar toggle button-->
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button" style="color: #white;">
             <span class="sr-only">Toggle navigation</span>
