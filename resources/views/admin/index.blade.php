@@ -42,6 +42,11 @@
             color: white !important;
             font-weight: bold !important;
         }
+        .user-panel>.image>img {
+            width: 45px !important;
+            height: 45px !important;
+            border-radius: 4px !important;
+        }
     </style>
 </head>
 <body class="hold-transition {{config('admin.skin')}} {{join(' ', config('admin.layout'))}}">
