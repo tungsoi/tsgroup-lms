@@ -13,13 +13,26 @@ use Illuminate\Support\Facades\Storage;
 class User extends Model implements AuthenticatableContract
 {
     use Authenticatable, AdminBuilder, HasPermissions;
-
     const ADMIN = 0;
-    const CUSTOMER = 1;
+    const STUDENT = 1;
     const ACTIVE = 1;
     const DEACTIVE = 0;
     protected $table = "admin_users";
-    protected $fillable = '*';
+    protected $fillable = [
+        'username',
+        'password',
+        'name',
+        'avatar',
+        'remember_token',
+        'email',
+        'phone_number',
+        'address',
+        'is_student',
+        'is_active',
+        'note',
+        'province',
+        'district',
+    ];
     protected $casts = [
         'created_at' => 'datetime:H:i | d-m-Y'
     ];
@@ -57,14 +70,5 @@ class User extends Model implements AuthenticatableContract
         $pivotTable = config('admin.database.user_permissions_table');
         $relatedModel = config('admin.database.permissions_model');
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
-    }
-
-    public function getAccessToken()
-    {
-        $token = json_decode($this->token, true);
-        if ($token && isset($token['access_token'])) {
-            return $token['access_token'];
-        }
-        return '';
     }
 }

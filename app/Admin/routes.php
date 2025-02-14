@@ -40,7 +40,7 @@ Route::group([
 ], function (Router $router) {
     $router->resources([
         'auth/roles' => 'System\\RoleController',
-        'customers' => 'System\\CustomerController',
+        'students' => 'System\\StudentController',
     ]);
 });
 

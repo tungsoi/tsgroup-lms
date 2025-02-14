@@ -11,7 +11,7 @@ return [
         'middleware' => ['web', 'admin'],
     ],
     'directory' => app_path('Admin'),
-    'title' => 'Admin',
+    'title' => 'TSGROUP - LMS',
     'https' => env('ADMIN_HTTPS', true),
     'auth' => [
         'controller' => App\Admin\Controllers\AuthController::class,

@@ -47,9 +47,9 @@ class AuthController extends Controller
         $this->loginValidator($request->all())->validate();
 
         $credentials = [
-            $this->username()   => $request->username,
-            'password'          =>  $request->password,
-            'is_active'            =>  User::ACTIVE
+            $this->username() => $request->username,
+            'password' => $request->password,
+            'is_active' => User::ACTIVE
         ];
         $remember = $request->get('remember', false);
 
@@ -72,8 +72,8 @@ class AuthController extends Controller
     protected function loginValidator(array $data)
     {
         return Validator::make($data, [
-            $this->username()   => 'required',
-            'password'          => 'required',
+            $this->username() => 'required',
+            'password' => 'required',
         ]);
     }
 
@@ -132,38 +132,22 @@ class AuthController extends Controller
     protected function settingForm()
     {
         $class = config('admin.database.users_model');
-
         $form = new Form(new $class());
         $form->setTitle('Cập nhật thông tin');
-
         $service = new UserService();
-        $form->column(1/2, function ($form) use ($service) {
-            
+        $form->column(1 / 2, function ($form) use ($service) {
             $form->display('username', 'Tên đăng nhập');
-
             if (Admin::user()->isRole('customer')) {
                 $form->text('symbol_name', 'Mã khách hàng')
-                ->creationRules(['required', "unique:admin_users"])
-                ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
+                    ->creationRules(['required', "unique:admin_users"])
+                    ->updateRules(['required', "unique:admin_users,symbol_name,{{id}}"]);
             }
             $form->text('name', 'Họ và tên')->rules('required');
             $form->text('phone_number', 'Số điện thoại')->rules('required');
-
-            if (Admin::user()->isRole('customer')) {
-                $form->divider();
-                $form->select('staff_sale_id', 'Nhân viên Kinh doanh')->options($service->GetListSaleEmployee());
-                $form->select('staff_order_id', 'Nhân viên Đặt hàng')->options($service->GetListOrderEmployee());
-                $form->select('customer_percent_service', '% Phí dịch vụ')->options($service->GetListPercentService())->readonly();
-            }
-       
             $form->image('avatar', trans('admin.avatar'));
         });
-        $form->column(1/2, function ($form) use ($service) {
-            $form->select('ware_house_id', 'Kho hàng')->options($service->GetListWarehouse())->rules('required');
-            $form->select('province', 'Tỉnh / Thành phố')->options($service->GetListProvince())->rules('required');
-            $form->select('district', 'Quận / Huyện')->options($service->GetListDistrict())->rules('required');
+        $form->column(1 / 2, function ($form) use ($service) {
             $form->text('address', 'Địa chỉ')->rules('required');
-
             $form->divider();
             $form->password('password', trans('admin.password'))->rules('confirmed|required');
             $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
@@ -171,35 +155,18 @@ class AuthController extends Controller
                     return $form->model()->password;
                 });
             $form->divider();
-            $form->html('Vui lòng cho chúng tôi biết bạn là khách hàng gì ?');
-
-            if (Admin::user()->isRole('customer')) {
-                $form->select('type_customer', 'Loại khách hàng')->options([
-                    '',
-                    'Khách hàng Vận chuyển',
-                    'Khách hàng Order',
-                    'Cả 2'
-                ])->rules('required');
-            }
         });
-       
-
         $form->setAction(admin_url('auth/setting'));
-
         $form->ignore(['password_confirmation']);
-
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {
                 $form->password = Hash::make($form->password);
             }
         });
-
         $form->saved(function () {
             admin_toastr(trans('admin.update_succeeded'));
-
             return redirect()->route('admin.home');
         });
-
         return $form;
     }
 
