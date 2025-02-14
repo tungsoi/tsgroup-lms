@@ -1,0 +1,95 @@
+@if ($empty)
+    <style>
+        .column-__actions__ {
+            display: none;
+        }
+    </style>
+@endif
+<div class="row">
+    <div class="col-md-3">
+        <div class="alert alert-warning">
+            <h4>Mã khách hàng</h4>
+            <b>{{ $customer->symbol_name }}</b>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert alert-info">
+            <h4>Số dư ví cân</h4>
+            <b>{{ $customer->wallet_weight ?? 0 }}</b>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert alert-success">
+            <h4>Số giao dịch dùng ví cân</h4>
+            <b>
+                @if (is_array($data) && sizeof($data) > 0)
+                    {{ sizeof($data) }}
+                @else
+                    0
+                @endif
+            </b>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="alert alert-danger">
+            <h4>Giao dịch gần nhất</h4>
+            <b>
+                @if (is_array($data) && sizeof($data) > 0)
+                    {{ $data[0]['payment_date'] }}
+                @else
+                    0
+                @endif
+            </b>
+        </div>
+    </div>
+</div>
+<br>
+
+@if (isset($mode) && $mode == 'recharge' && $form != "")
+    {!! $form !!}
+@endif
+
+<table class="table table-bordered">
+    <thead>
+        <th>STT</th>
+        <th>Ngày giao dịch</th>
+        <th>Người tạo</th>
+        <th>Số cân</th>
+        <th>Nội dung giao dịch</th>
+    </thead>
+    <tbody>
+        @php
+            $total = 0;
+        @endphp
+        @if ($data->count() > 0)
+            @foreach ($data as $key => $transaction)
+                <tr>
+                    <td>{{ $key+1 }}</td>
+                    <td align="center">{{ date('H:i | d-m-Y', strtotime($transaction->created_at)) }}</td>
+                    <td align="center">{{ $transaction->userCreated->name }}</td>
+                    <td align="center">
+                        @if (strpos($transaction->content, "Thanh toán") !== false )
+                            <span style="color: red">-{{ $transaction->kg }}</span>
+                            @php
+                                $total -= number_format($transaction->kg, 1, '.', '');
+                            @endphp
+                        @else 
+                            <span style="color: green">+{{ $transaction->kg }}</span>
+                            @php
+                                $total += number_format($transaction->kg, 1, '.', '');
+                            @endphp
+                        @endif
+                       </td>
+                    <td align="center">{{ $transaction->content }}</td>
+                </tr>
+            @endforeach
+        @endif
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td align="center">{{ number_format($total, 1, '.', '') }}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
