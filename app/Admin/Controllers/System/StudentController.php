@@ -10,6 +10,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class StudentController extends AdminController
 {
@@ -25,7 +26,7 @@ class StudentController extends AdminController
      */
     protected function title()
     {
-        return 'Danh sách khách hàng';
+        return 'Danh sách học viên';
     }
 
     /**
@@ -89,17 +90,12 @@ class StudentController extends AdminController
 
             return new Table(['Thông tin', 'Nội dung'], $info);
         })->style('width: 100px; text-align: center;');
-        $grid->wallet('Ví tiền')->display(function () {
-            $label = $this->wallet < 0 ? "red" : "green";
-            return "<span style='color: {$label}'>" . number_format($this->wallet) . "</span>";
-        })->style('text-align: right; max-width: 150px;');
         $states = [
             'on' => ['value' => User::ACTIVE, 'text' => 'Mở', 'color' => 'success'],
             'off' => ['value' => User::DEACTIVE, 'text' => 'Khoá', 'color' => 'danger'],
         ];
         $grid->note('Ghi chú')->editable()->style('max-width: 150px;');
         $grid->column('is_active', 'Trạng thái')->switch($states)->style('text-align: center');
-        $grid->disableCreateButton();
         $grid->disableBatchActions();
         $grid->disableColumnSelector();
         $grid->paginate(20);
@@ -122,9 +118,8 @@ class StudentController extends AdminController
         $form = new Form(new $class());
         $form->setTitle('Cập nhật thông tin');
 
-        $service = new UserService();
-        $form->column(1 / 2, function ($form) use ($service) {
-            $form->display('username', 'Tên đăng nhập');
+        $form->column(1 / 2, function ($form) {
+            $form->text('username', 'Tên đăng nhập')->default(Str::random(15));
             $form->text('name', 'Họ và tên')->rules('required');
             $form->text('phone_number', 'Số điện thoại')->rules('required');
             $form->divider();
@@ -135,7 +130,7 @@ class StudentController extends AdminController
             $form->switch('is_active', 'Trạng thái tài khoản')->states($states);
             $form->text('note', 'Ghi chú');
         });
-        $form->column(1 / 2, function ($form) use ($service) {
+        $form->column(1 / 2, function ($form) {
             $form->text('address', 'Địa chỉ')->rules('required');
             $form->divider();
             $form->password('password', trans('admin.password'))->rules('confirmed|required');
@@ -147,6 +142,7 @@ class StudentController extends AdminController
         });
 
         $form->ignore(['password_confirmation']);
+        $form->hidden('is_student')->value(User::STUDENT);
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {
                 $form->password = Hash::make($form->password);
