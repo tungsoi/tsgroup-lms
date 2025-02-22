@@ -6,9 +6,9 @@
   <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  
+
   @if(!is_null($favicon = Admin::favicon()))
-  <link rel="shortcut icon" href="{{$favicon}}">
+    <link rel="shortcut icon" href="{{$favicon}}">
   @endif
 
   <!-- Bootstrap 3.3.5 -->
@@ -20,7 +20,8 @@
   <!-- iCheck -->
   <link rel="stylesheet" href="{{ admin_asset("vendor/laravel-admin/AdminLTE/plugins/iCheck/square/blue.css") }}">
 </head>
-<body class="hold-transition login-page" @if(config('admin.login_background_image'))style="background: url({{config('admin.login_background_image')}}) no-repeat;background-size: cover;"@endif>
+<body class="hold-transition login-page"
+      @if(config('admin.login_background_image'))style="background: url({{config('admin.login_background_image')}}) no-repeat;background-size: cover;"@endif>
 <div class="login-box">
   <div class="login-logo">
     <a href="{{ admin_url('/') }}"><b>{{config('admin.name')}}</b></a>
@@ -38,13 +39,13 @@
           @endforeach
         @endif
 
-        <input type="text" class="form-control" placeholder="Địa chỉ email" name="username" value="{{ old('username') }}">
-        {{-- <span class="glyphicon glyphicon-envelope form-control-feedback"></span> --}}
+        <input type="text" class="form-control" placeholder="Địa chỉ email" name="username"
+               value="{{ old('username') }}">
       </div>
       <div class="row">
         <div class="col-xs-12">
           <input type="hidden" name="_token" value="{{ csrf_token() }}">
-          <button type="submit" class="btn btn-warning btn-block btn-flat">{{ trans('admin.register') }}</button>
+{{--          <button type="submit" class="btn btn-warning btn-block btn-flat">{{ trans('admin.register') }}</button>--}}
         </div>
         <!-- /.col -->
       </div>
@@ -55,7 +56,7 @@
           <p>Đã có tài khoản ? <a href="{{ route('admin.login') }}">Đăng nhập</a></p>
 
           <hr>
-          <p><a href="https://alilogi.vn">Trang chủ</a></p>
+          <p><a href="/">Trang chủ</a></p>
         </div>
       </div>
     </form>

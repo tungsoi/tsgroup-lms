@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers\Education;
 
+use App\Admin\Actions\Education\AddExam;
 use App\Models\Course;
 use App\Models\Lesson;
 use Encore\Admin\Controllers\AdminController;
