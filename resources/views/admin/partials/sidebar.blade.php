@@ -29,8 +29,8 @@
                 <img src="{{ Admin::user()->avatar }}" class="img-radius-10" alt="User Image">
             </div>
             <div class="pull-left info">
-                <a href="#"><i class="fa fa-circle text-success"></i> {{ Admin::user()->name }}</a> <br> <br>
-                <a href="#"><i class="fa fa-circle text-success"></i> {{ Admin::user()->phone_number }}</a>
+                <a href="#"><i class="fa fa-circle text-success"></i> {{ Admin::user()->roles->first()->name }}</a> <br> <br>
+                <a href="#"><i class="fa fa-circle text-success"></i> {{ Admin::user()->name }}</a>
             </div>
         </div>
         <ul class="sidebar-menu">

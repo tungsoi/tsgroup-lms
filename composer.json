@@ -10,13 +10,13 @@
   "require": {
     "php": ">=7.0.0",
     "encore/laravel-admin": "^1.8",
-    "fideloper/proxy": "~3.3",
+    "fideloper/proxy": "*",
     "intervention/image": "^2.5",
     "jxlwqq/material-ui": "^1.0",
     "laravel-admin-ext/chartjs": "^1.0",
     "laravel-admin-ext/grid-lightbox": "^1.0",
     "laravel-admin-ext/summernote": "^1.0",
-    "laravel/framework": "5.5.*",
+    "laravel/framework": "5.8.*",
     "laravel/tinker": "~1.0"
   },
   "require-dev": {
@@ -62,9 +62,6 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "optimize-autoloader": true,
-    "github-oauth": {
-      "github.com": "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"
-    },
     "allow-plugins": {
       "kylekatarnls/update-helper": true,
       "symfony/thanks": true

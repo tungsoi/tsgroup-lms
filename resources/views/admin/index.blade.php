@@ -16,8 +16,6 @@
     {!! Admin::css() !!}
     <script src="{{ Admin::jQuery() }}"></script>
     {!! Admin::headerJs() !!}
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 
     <style>
         .main-header {
@@ -46,6 +44,43 @@
             width: 45px !important;
             height: 45px !important;
             border-radius: 4px !important;
+        }
+        #exam-create .question-container {
+            margin-bottom: 20px;
+            border: 1px solid #d2d6de;
+            padding: 10px;
+        }
+
+        #exam-create .answers {
+            margin-top: 20px;
+        }
+
+        #exam-create .answer {
+            margin-bottom: 10px;
+        }
+
+        #exam-create .remove-question-btn {
+            margin-top: 10px;
+        }
+
+        #exam-create .answer-correct {
+            transform: scale(1.5);
+        }
+
+        #exam-create .table td, #exam-create .table th {
+            vertical-align: middle;
+        }
+
+        #exam-create .table input[type="text"] {
+            width: 100%;
+        }
+
+        #exam-create .btn-sm {
+            font-size: 12px;
+        }
+
+        #exam-create .add-answer {
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -77,5 +112,6 @@
     LA.token = "{{ csrf_token() }}";
     LA.user = @json($_user_);
 </script>
+
 {!! Admin::js() !!}
 </html>

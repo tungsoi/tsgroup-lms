@@ -2,38 +2,18 @@
 
 namespace App\Admin\Controllers\System;
 
-use App\Admin\Services\UserService;
 use App\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Widgets\Table;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class StudentController extends AdminController
 {
-    protected $userService;
+    protected $title = 'Danh sách học viên';
 
-    public function __construct()
-    {
-        $this->userService = new UserService();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function title()
-    {
-        return 'Danh sách học viên';
-    }
-
-    /**
-     * Make a grid builder.
-     *
-     * @return Grid
-     */
     protected function grid()
     {
         $grid = new Grid(new User());
@@ -42,17 +22,14 @@ class StudentController extends AdminController
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
 
-            $filter->column(1 / 4, function ($filter) {
+            $filter->column(1 / 3, function ($filter) {
                 $filter->like('name', 'Họ và tên');
             });
-            $filter->column(1 / 4, function ($filter) {
+            $filter->column(1 / 3, function ($filter) {
                 $filter->like('username', 'Email');
             });
-            $filter->column(1 / 4, function ($filter) {
+            $filter->column(1 / 3, function ($filter) {
                 $filter->like('phone_number', 'Số điện thoại');
-            });
-            $filter->column(1 / 4, function ($filter) {
-                $filter->between('created_at', 'Ngày tạo tài khoản')->date();
             });
             Admin::style('
                 #filter-box label {
@@ -77,24 +54,16 @@ class StudentController extends AdminController
         });
         $grid->column('number', 'STT');
         $grid->avatar()->lightbox(['width' => 40]);
-        $grid->id('Hồ sơ')->display(function () {
-            return "Tất cả";
-        })->expand(function ($model) {
-            $info = [
-                "ID" => $model->id,
-                "Địa chỉ Email" => $model->email,
-                "Số điện thoại" => $model->phone_number,
-                "Ngày mở tài khoản" => date('H:i | d-m-Y', strtotime($this->created_at)),
-                "Địa chỉ" => $model->address,
-            ];
-
-            return new Table(['Thông tin', 'Nội dung'], $info);
-        })->style('width: 100px; text-align: center;');
+        $grid->name('Họ và tên')->editable();
+        $grid->username('Tài khoản');
+        $grid->email('Email')->editable();
+        $grid->phone_number('Số diện thoại')->editable();
+        $grid->address('Địa chỉ')->editable();
+        $grid->note('Ghi chú')->editable();
         $states = [
             'on' => ['value' => User::ACTIVE, 'text' => 'Mở', 'color' => 'success'],
             'off' => ['value' => User::DEACTIVE, 'text' => 'Khoá', 'color' => 'danger'],
         ];
-        $grid->note('Ghi chú')->editable()->style('max-width: 150px;');
         $grid->column('is_active', 'Trạng thái')->switch($states)->style('text-align: center');
         $grid->disableBatchActions();
         $grid->disableColumnSelector();
@@ -106,41 +75,27 @@ class StudentController extends AdminController
         return $grid;
     }
 
-    protected function detail($id)
-    {
-        return redirect()->route('admin.customers.index');
-    }
-
     public function form()
     {
-        $class = config('admin.database.users_model');
-
-        $form = new Form(new $class());
-        $form->setTitle('Cập nhật thông tin');
-
-        $form->column(1 / 2, function ($form) {
-            $form->text('username', 'Tên đăng nhập')->default(Str::random(15));
-            $form->text('name', 'Họ và tên')->rules('required');
-            $form->text('phone_number', 'Số điện thoại')->rules('required');
-            $form->divider();
-            $states = [
-                'on' => ['value' => User::ACTIVE, 'text' => 'Mở', 'color' => 'success'],
-                'off' => ['value' => User::DEACTIVE, 'text' => 'Khoá', 'color' => 'danger'],
-            ];
-            $form->switch('is_active', 'Trạng thái tài khoản')->states($states);
-            $form->text('note', 'Ghi chú');
+        $form = new Form(new User());
+        $form->text('username', 'Tên đăng nhập')->default(Str::random(15))->disable();
+        $form->text('name', 'Họ và tên')->rules('required');
+        $form->text('email', 'Email')->rules('required');
+        $form->text('phone_number', 'Số điện thoại')->rules('required');
+        $states = [
+            'on' => ['value' => User::ACTIVE, 'text' => 'Mở', 'color' => 'success'],
+            'off' => ['value' => User::DEACTIVE, 'text' => 'Khoá', 'color' => 'danger'],
+        ];
+        $form->text('note', 'Ghi chú');
+        $form->text('address', 'Địa chỉ')->rules('required');
+        $form->divider();
+        $form->password('password', trans('admin.password'))->rules('confirmed|required');
+        $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
+        ->default(function ($form) {
+            return $form->model()->password;
         });
-        $form->column(1 / 2, function ($form) {
-            $form->text('address', 'Địa chỉ')->rules('required');
-            $form->divider();
-            $form->password('password', trans('admin.password'))->rules('confirmed|required');
-            $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
-                ->default(function ($form) {
-                    return $form->model()->password;
-                });
-            $form->divider();
-        });
-
+        $form->divider();
+        $form->switch('is_active', 'Trạng thái tài khoản')->states($states);
         $form->ignore(['password_confirmation']);
         $form->hidden('is_student')->value(User::STUDENT);
         $form->saving(function (Form $form) {
@@ -154,12 +109,4 @@ class StudentController extends AdminController
         });
         return $form;
     }
-
-    public function script()
-    {
-        return <<<SCRIPT
-            $("input[name='_method']").val('POST');
-SCRIPT;
-    }
-
 }

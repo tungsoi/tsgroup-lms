@@ -7,20 +7,15 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Show;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends AdminController
 {
-    protected function title()
-    {
-        return 'Danh sách nhân viên';
-    }
+    protected $title = 'Danh sách nhân viên';
 
     protected function grid()
     {
         $grid = new Grid(new User());
-        $grid->model()->select('id', 'avatar', 'username', 'name', 'is_active', 'created_at', 'phone_number');
         $grid->model()->whereisStudent(User::ADMIN)->orderBy('id', 'desc');
         if (!isset($_GET['is_active'])) {
             $grid->model()->whereIsActive(User::ACTIVE);
@@ -83,14 +78,9 @@ class UserController extends AdminController
         $grid->paginate(20);
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $actions->disableView();
+            $actions->disableDelete();
         });
         return $grid;
-    }
-
-    protected function detail($id)
-    {
-        $show = new Show(User::findOrFail($id));
-        return $show;
     }
 
     public function form()
@@ -104,8 +94,11 @@ class UserController extends AdminController
         $form->text('username', trans('admin.username'))
             ->creationRules(['required', "unique:{$connection}.{$userTable}"])
             ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
-
-        $form->text('name', trans('admin.name'))->rules('required');
+        $form->text('name', 'Họ và tên')->rules('required');
+        $form->text('email', 'Email')->rules('required');
+        $form->text('phone_number', 'Số điện thoại')->rules('required');
+        $form->text('note', 'Ghi chú');
+        $form->text('address', 'Địa chỉ')->rules('required');
         $form->divider();
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')

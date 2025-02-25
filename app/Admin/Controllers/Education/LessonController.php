@@ -11,11 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class LessonController extends AdminController
 {
-
-    protected function title()
-    {
-        return 'Bài Giảng';
-    }
+    protected $title = 'Danh sách Bài giảng';
 
     protected function grid()
     {
@@ -27,12 +23,12 @@ class LessonController extends AdminController
                 $filter->like('name', 'Tên bài giảng');
             });
         });
-
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number + 1));
         });
         $grid->column('number', 'STT');
-        $grid->column('name', 'Tên bài giảng')->editable();
+        $grid->name('Tên bài giảng')->editable();
+        $grid->description('Mô tả')->editable();
         $grid->column('created_at', 'Ngày tạo')->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         })->style('text-align: center');
@@ -44,17 +40,12 @@ class LessonController extends AdminController
         });
         return $grid;
     }
-
-    protected function detail($id)
-    {
-        return new Show(Lesson::findOrFail($id));
-    }
-
     public function form()
     {
         $form = new Form(new Lesson());
-        $form->text('name', 'Têm bài giảng');
-        $form->summernote('content');
+        $form->text('name', 'Tên bài giảng')->required();
+        $form->textarea('description', 'Mô tả')->required();
+        $form->textarea('content', 'Link bài giảng')->required();
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();

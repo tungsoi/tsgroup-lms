@@ -10,7 +10,20 @@ class Course extends Model
     protected $fillable = [
         'name',
         'code',
-        'description',
-        'number_of_students',
+        'description'
     ];
+    public function courseExams()
+    {
+        return $this->hasMany(CourseExam::class,'course_id', 'id');
+    }
+    public function courseLessons()
+    {
+        return $this->hasMany(CourseLesson::class,'course_id', 'id');
+    }
+
+    public function courseStudents()
+    {
+        return $this->hasMany(CourseStudent::class,'course_id', 'id');
+    }
+
 }

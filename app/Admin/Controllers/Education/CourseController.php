@@ -2,22 +2,18 @@
 
 namespace App\Admin\Controllers\Education;
 
-use App\Admin\Actions\Education\AddExam;
 use App\Models\Course;
+use App\Models\Exam;
 use App\Models\Lesson;
+use App\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use Illuminate\Support\Facades\Hash;
 
 class CourseController extends AdminController
 {
-
-    protected function title()
-    {
-        return 'Khóa học';
-    }
+    protected $title = 'Khoá học';
 
     protected function grid()
     {
@@ -34,10 +30,18 @@ class CourseController extends AdminController
             $row->column('number', ($row->number + 1));
         });
         $grid->column('number', 'STT');
-        $grid->column('name', 'Tên khóa học')->editable();
         $grid->column('code', 'Mã khóa học')->editable();
+        $grid->column('name', 'Tên khóa học')->editable();
         $grid->column('description', 'Mô tả')->editable();
-        $grid->column('number_of_students', 'Số lượng học viên')->editable();
+        $grid->column('courseLessons', 'Bài giảng')->display(function ($courseLessons) {
+            return count($courseLessons);
+        });
+        $grid->column('courseExams', 'Bài kiểm tra')->display(function ($courseExams) {
+            return count($courseExams);
+        });
+        $grid->column('courseStudents', 'Học viên')->display(function ($courseStudents) {
+            return count($courseStudents);
+        });
         $grid->column('created_at', 'Ngày tạo')->display(function () {
             return date('H:i | d-m-Y', strtotime($this->created_at));
         })->style('text-align: center');
@@ -58,10 +62,21 @@ class CourseController extends AdminController
     public function form()
     {
         $form = new Form(new Course());
-        $form->text('name', 'Têm khóa học');
-        $form->text('code', 'Mã khóa học');
-        $form->text('description', 'Mô tả');
-        $form->number('number_of_students', 'Số lượng học viên');
+        $form->text('name', 'Têm khóa học')->required();
+        $form->text('code', 'Mã khóa học')->required();
+        $form->text('description', 'Mô tả')->required();
+        $form->divider('Bài giảng');
+        $form->hasMany('courseLessons', '',  function (Form\NestedForm $form) {
+            $form->select('lesson_id', 'Tên bài giảng')->options(Lesson::all()->pluck('name', 'id'))->required();
+        });
+        $form->divider('Bài kiểm tra');
+        $form->hasMany('courseExams', '', function (Form\NestedForm $form) {
+            $form->select('exam_id', 'Tên bài kiểm tra')->options(Exam::all()->pluck('name', 'id'))->required();
+        });
+        $form->divider('Học viên');
+        $form->hasMany('courseStudents', '', function (Form\NestedForm $form) {
+            $form->select('student_id', 'Họ và tên')->options(User::whereIsStudent(User::STUDENT)->get()->pluck('name', 'id'))->required();
+        });
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();

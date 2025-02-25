@@ -17,10 +17,7 @@ class HomeController extends Controller
     {
         return $content
             ->title('Bảng điều khiển')
-            ->row(function (Row $row) {
-                $row->column(3, new InfoBox('Họ và tên', 'book', 'green', '/admin/customers', Admin::user()->name != null ? Admin::user()->name : Admin::user()->username));
-                $row->column(3, new InfoBox('Số điện thoại', 'tag', 'yellow', '/admin/puchase_orders', Admin::user()->wallet_weight . " KG"));
-            });
+            ->row(function (Row $row) {});
     }
 
     public function blank()

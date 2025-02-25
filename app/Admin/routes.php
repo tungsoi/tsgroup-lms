@@ -23,18 +23,18 @@ Route::group([
 });
 
 Admin::routes();
-
-Route::group([
-    'prefix' => config('admin.route.prefix'),
-    'namespace' => config('admin.route.namespace'),
-    'middleware' => [
-        'web',
-        'admin',
-        'admin.permission:deny,customer'
-    ],
-    'as' => config('admin.route.prefix') . '.',
-], function (Router $router) {
-});
+//
+//Route::group([
+//    'prefix' => config('admin.route.prefix'),
+//    'namespace' => config('admin.route.namespace'),
+//    'middleware' => [
+//        'web',
+//        'admin',
+//        'admin.permission:deny,customer'
+//    ],
+//    'as' => config('admin.route.prefix') . '.',
+//], function (Router $router) {
+//});
 
 Route::group([
     'prefix' => config('admin.route.prefix'),
@@ -48,10 +48,14 @@ Route::group([
         'auth/roles' => 'System\\RoleController',
         'auth/users' => 'System\\UserController',
         'students' => 'System\\StudentController',
-        'exams' =>  'Education\\ExamController',
         'lessons' => 'Education\\LessonController',
         'courses' => 'Education\\CourseController',
+        'learnings' => 'Education\\LearningController',
     ]);
+    $router->resource('exams', 'Education\\ExamController')->except(['update']);
     $router->get('chart1', 'Report\\CourseController@chart1');
     $router->get('chart2', 'Report\\CourseController@chart2');
+
+    $router->post('exams', 'Education\\ExamController@storeRebuild')->name('exams.store');
+    $router->put('exams/{exam}', 'Education\\ExamController@updateRebuild')->name('exams.update');
 });
